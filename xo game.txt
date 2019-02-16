@@ -1,0 +1,135 @@
+
+package xo;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+
+
+
+class tictactoe extends JFrame {
+    char whoturn ='x';
+    element[][] ele=new element[3][3] ;
+    JLabel l =new JLabel(whoturn+"'s turn ");
+   private boolean gameOver = false;
+    
+    tictactoe(){
+       Dimension d= new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
+       this.setVisible(true); 
+       this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+       this.setTitle("XO game :) ");
+       this.setBounds(d.width/4, d.height/4, 500,500);
+       JPanel p=new JPanel(new GridLayout(3,3));
+       
+       for(int i=0;i<3;i++)
+           for(int j=0;j<3;j++)
+            p.add(ele[i][j]=new element());
+       
+       
+       this.add(p,BorderLayout.CENTER);
+       this.add(l, BorderLayout.SOUTH);
+    } 
+    
+    boolean full(){
+        for(int i=0;i<3;i++)
+           for(int j=0;j<3;j++)
+               if(ele[i][j].getWhatIn() == ' ')
+                   return false;
+        return true;
+    }
+    boolean win(char whatin ){
+        for (int i = 0; i < 3; i++)//row
+           if ((ele[i][0].getWhatIn() == whatin)
+                   && (ele[i][1].getWhatIn() == whatin)
+                   && (ele[i][2].getWhatIn() == whatin))
+           {
+               return true;
+           }
+         for (int j = 0; j < 3; j++)//column
+           if ((ele[0][j].getWhatIn() == whatin)
+               && (ele[1][j].getWhatIn() == whatin)
+               && (ele[2][j].getWhatIn() == whatin))
+           {
+               return true;
+           }
+       // check diagonal
+       if ((ele[0][0].getWhatIn() == whatin)
+               && (ele[1][1].getWhatIn() == whatin)
+               && (ele[2][2].getWhatIn() == whatin))
+           {
+               return true;
+           }
+ 
+       if ((ele[0][2].getWhatIn() == whatin)
+               && (ele[1][1].getWhatIn() == whatin)
+               && (ele[2][0].getWhatIn() == whatin))
+           {
+               return true;
+           }
+ 
+       return false;
+   }
+    
+    
+    
+    class element extends JPanel{
+       public char whatin=' ';
+        element(){
+            this.setBorder(new LineBorder(Color.black, 1));
+            addMouseListener(new myListener());
+        }
+         public char getWhatIn(){
+            return whatin;
+        }
+        public void setWhatIn(char s){
+            whatin=s;
+           repaint();
+        }
+        protected void paintComponent(Graphics g){
+            super.paintComponent(g);
+            if(whatin =='x'){
+                g.drawLine(10, 10,this.getWidth()-10,this.getHeight()-10);
+                g.drawLine(this.getWidth()-10,10,10, this.getHeight()-10);
+            }
+            else if(whatin == 'o')
+                g.drawOval(10, 10, this.getWidth()-20,this.getHeight()-20);
+        }
+        
+        class myListener extends MouseAdapter{
+            
+            public void mouseClicked(MouseEvent e){
+                if(gameOver )
+                    return;
+                
+                if(whatin == ' ' && whoturn != ' '){
+                    setWhatIn(whoturn);
+                }
+                if(full()){
+                    l.setText(" game over :(");
+                   whoturn=' ';
+                   gameOver = true;
+                    
+                }
+                else if(win(whatin)){
+                    l.setText("player "+whoturn+" win");
+                    whoturn=' ';
+                    gameOver = true;
+                }
+                else {
+                    whoturn = (whoturn == 'x') ? 'o' : 'x';
+                    l.setText(whoturn+"'s turn ");
+                }
+            }
+        }
+    }
+}
+
+
+public class XO {
+
+    
+    public static void main(String[] args) {
+        new tictactoe();
+    }
+    
+}
